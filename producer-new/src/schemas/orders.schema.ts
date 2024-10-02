@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Types } from 'mongoose';
+import { User } from './user.schema';
 
 export type OrderDocument = Order & Document;
 
@@ -16,6 +18,8 @@ export class Order {
   @Prop()
   customerName: string;
 
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })  // Reference to the user who placed the order
+  user: User | Types.ObjectId;
   __v: number;
 
   status: string;

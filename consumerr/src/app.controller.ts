@@ -15,8 +15,6 @@ export class AppController{
         console.log('Order Recieved: ', order);
 
     }
-
-
     // @MessagePattern('dead_letter')
     // async acceptOrder(@Payload() order : any, @Ctx() context: RmqContext){
     //     const channel = context.getChannelRef(); 

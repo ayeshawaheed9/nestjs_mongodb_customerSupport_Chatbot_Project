@@ -23,7 +23,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: ['amqp://localhost:5672'],
-      queue: 'dlx_queue', // Dead-letter queue
+      queue: 'dlx_queue', 
       noAck: false, // Enable manual acknowledgment
       queueOptions: {
         durable: true,
