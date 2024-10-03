@@ -7,6 +7,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-ioredis';
 import { User, UserSchema } from 'src/schemas/user.schema';
+import { AuthGuard } from 'src/guard/auth.guard';
+import { UserService } from 'src/users/users.service';
 
 @Module({
   imports: [
@@ -37,6 +39,6 @@ import { User, UserSchema } from 'src/schemas/user.schema';
     }
   )],
   controllers: [OrdersController],
-  providers: [OrdersService],
+  providers: [OrdersService, AuthGuard, UserService],
 })
 export class OrdersModule {}

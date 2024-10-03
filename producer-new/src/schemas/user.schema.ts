@@ -13,7 +13,13 @@ export class User {
   userName: string;
 
   @Prop({required: true})
+  password: string
+
+  @Prop({required: true})
   phoneNumber: number;
+
+  @Prop({default: false})
+  isloggedIn: boolean
 
   @Prop({required:false})
   email: string;

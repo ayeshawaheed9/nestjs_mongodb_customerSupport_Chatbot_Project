@@ -6,6 +6,7 @@ import { CacheModule } from "@nestjs/cache-manager";
 import * as redisStore from "cache-manager-ioredis";
 import { UserController } from "./users.controller";
 import { UserService } from "./users.service";
+import { AuthGuard } from "src/guard/auth.guard";
 
 @Module({
     imports: [MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
@@ -18,6 +19,6 @@ import { UserService } from "./users.service";
         }
       )],
     controllers: [UserController], 
-    providers:[UserService]
+    providers:[UserService, AuthGuard]
 })
 export class UserModule{}
