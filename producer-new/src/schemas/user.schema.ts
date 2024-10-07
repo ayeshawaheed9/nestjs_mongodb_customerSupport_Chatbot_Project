@@ -27,6 +27,9 @@ export class User {
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Order' }] })  // Reference to multiple orders
   orders:Types.ObjectId[];
 
+  @Prop({type: String, enum: ['admin', 'customer'], required: true }) // Role property
+  role: string; // Only one role allowed (either 'admin' or 'customer')
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

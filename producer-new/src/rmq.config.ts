@@ -6,7 +6,7 @@ if (connection){
 }
 console.log(connection);
 connection.on('connect', () => {
-  console.log('Successfully connected to RabbitMQ');
+  console.log('Successfully connected to RabbitMQ(from file rmq config)');
 });
 connection.on('error', (err) => {
     console.error('Connection error:', err);

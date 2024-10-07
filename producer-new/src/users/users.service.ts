@@ -10,6 +10,7 @@ import { createUserDto } from "src/dtos/create-user.dto";
 import { Cache } from 'cache-manager';
 import { NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { userloginDto } from "src/dtos/user-login.dto";
+import { RolesGuard } from "src/guard/role.guard";
 @Injectable()
 export class UserService{
     constructor(
@@ -18,11 +19,16 @@ export class UserService{
     @Inject(CACHE_MANAGER) private cacheManager: Cache
 
     ){}
-    async createUser(user:createUserDto,){
+    async createUser(user:createUserDto,role: string){
         const saltOrRounds=10;
         user.password = await bcrypt.hash(user.password, saltOrRounds);
-        
+        if (role !== 'admin' && role !== 'customer') {
+          return {
+              message: 'Role not valid'
+          };
+      }
         const newUser = new this.userModel(user);
+        newUser.role= role;
         const savedUser =  await newUser.save();
         await this.cacheManager.set(`user-${savedUser.userName}`, savedUser,3000);
 
@@ -34,7 +40,7 @@ export class UserService{
           }
         }
     }
-    async loginUser(credentials: userloginDto, session: any){
+    async loginUser(credentials: userloginDto, role: string, session: any){
       const username = credentials.username
       const password = credentials.password
 
@@ -49,6 +55,12 @@ export class UserService{
     }
     session.userId = user._id; // Store user ID in session
     user.isloggedIn = true;
+    if (role !== 'admin' && role !== 'customer') {
+      return {
+          message: 'Role not valid'
+      };
+  }
+    user.role= role;
     await user.save();
     console.log(session.userId);
     return {
@@ -79,6 +91,20 @@ export class UserService{
     
         return user;
       }
+      async search(query: string): Promise<{ users: User[]; orders: Order[] }> {
+        const userSearch = this.userModel.find({
+          userName: { $regex: query, $options: 'i' }, // Case insensitive search for username
+        });
+    
+        const orderSearch = this.orderModel.find({
+          productName: { $regex: query, $options: 'i' }, // Case insensitive search for product name
+        });
+    
+        const [users, orders] = await Promise.all([userSearch, orderSearch]);
+    
+        return { users, orders };
+      }
+
       async logout(session: any) {
         session.destroy((err) => {
           if (err) {

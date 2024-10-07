@@ -8,9 +8,10 @@ import * as redisStore from 'cache-manager-ioredis';
 import { UserModule } from './users/users.module';
 import { fileUploadModule } from './fileUpload/fileUpload.module';
 import { AppController } from './app.controller';
+import { SearchModule } from './searchmodule/search.module';
 
 @Module({
-  imports: [ DatabaseModule, OrdersModule, UserModule , fileUploadModule,
+  imports: [ DatabaseModule, SearchModule, OrdersModule, UserModule , fileUploadModule,
     CacheModule.register({
       store: redisStore,
       host: 'localhost', 

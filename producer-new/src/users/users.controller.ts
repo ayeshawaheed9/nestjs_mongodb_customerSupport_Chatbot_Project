@@ -9,13 +9,13 @@ export class UserController{
     constructor(private readonly usersService: UserService){
 
     }
-    @Post('/create_user')
-    async createUser(@Body() user: createUserDto){
-        return this.usersService.createUser(user);
+    @Post('/create_user/:role')
+    async createUser(@Body() user: createUserDto, @Param('role') role: string){
+        return this.usersService.createUser(user, role);
     }
-    @Post('/login_user')
-    async loginUser(@Body() loginCredentials: userloginDto, @Req() req:any){
-        return this.usersService.loginUser(loginCredentials, req.session)
+    @Post('/login_user/:role')
+    async loginUser(@Body() loginCredentials: userloginDto,@Param('role') role: string, @Req() req:any){
+        return this.usersService.loginUser(loginCredentials,role, req.session)
     }
     @Get('/get_user/:username')
     async getUserbyName(@Param('username') username: string){
