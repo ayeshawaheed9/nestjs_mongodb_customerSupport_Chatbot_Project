@@ -7,6 +7,7 @@ import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-ioredis';
 import { UserModule } from './users/users.module';
 import { fileUploadModule } from './fileUpload/fileUpload.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [ DatabaseModule, OrdersModule, UserModule , fileUploadModule,
@@ -16,7 +17,7 @@ import { fileUploadModule } from './fileUpload/fileUpload.module';
       port: 6379,
   }),
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [AppService,
     {
       provide: APP_INTERCEPTOR,

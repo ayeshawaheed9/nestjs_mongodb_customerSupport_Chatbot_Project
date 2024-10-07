@@ -2,10 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
 import RedisStore from 'connect-redis';
+import { ClientProxy } from '@nestjs/microservices';
 import { createClient } from 'redis';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-
-import { RemoveIdInterceptor } from './interceptors/removeIdInterceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice<MicroserviceOptions>({

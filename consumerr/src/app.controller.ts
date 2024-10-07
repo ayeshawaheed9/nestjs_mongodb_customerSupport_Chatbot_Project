@@ -43,7 +43,7 @@ export class AppController{
 
     // Publish the order status update back to RabbitMQ
     const message = `Order Status updated to ${receivedOrder.status}, order Id: ${mongooseOrderId}`;
-    await this.channel.publish('order_status_exchange', 'order_status-updated', message);
+    await this.channel.publish('order_status_exchange', 'order_status_updated', message);
     console.log('Order status published:', message);
     
     // Explicitly acknowledge the message
