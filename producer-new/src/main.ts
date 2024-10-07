@@ -3,10 +3,22 @@ import { AppModule } from './app.module';
 import * as session from 'express-session';
 import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 import { RemoveIdInterceptor } from './interceptors/removeIdInterceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://localhost:5672'],
+      queue: 'orders_status_queue',
+      queueOptions: {
+        durable: true,
+      },
+    },
+  });
+
   //app.useGlobalInterceptors( new RemoveIdInterceptor());
   // Create Redis client for session store
   const redisClient = createClient({ url: 'redis://localhost:6379' });
@@ -26,7 +38,8 @@ async function bootstrap() {
       },
     }),
   );
-  console.log('working')
+  await app.startAllMicroservices();
+  console.log('Microservice listening for order status')
   await app.listen(9000);
 
 }

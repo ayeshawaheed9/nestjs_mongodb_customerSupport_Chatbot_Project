@@ -16,7 +16,7 @@ export class OrdersController {
 
   
   @Post('/place_order/:userId')
-  @UsePipes(new ValidationPipe())
+ // @UsePipes(new ValidationPipe())
   async placeOrder(@Param('userId') userId: string,@Body() createOrderDto: CreateOrderDto) {
     return this.ordersService.createOrder_Direct(userId,createOrderDto);
   }

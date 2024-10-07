@@ -31,14 +31,24 @@ connection.on('disconnect', (params) => {
   const queue= 'orders_queue';
   const routingKey = 'order_placed';
   
+
   await channel.assertExchange(exchange, exchangeType, { durable: true });
   await channel.assertQueue(queue, { durable: true, arguments: {
     'x-message-ttl': 60000,
     'x-dead-letter-exchange': dlxExchange,  // Configure Dead Letter Exchange
     'x-dead-letter-routing-key': 'dead_letter'  // Routing key for DLX
+
 } });
   await channel.bindQueue(queue, exchange, routingKey);
 
+  const exchange2 = 'order_status_exchange';
+  const exchangeType2 ='direct'; 
+  const queue2= 'orders_status_queue';
+  const routingKey2 = 'order_status_updated';
+
+  await channel.assertExchange(exchange2, exchangeType2, {durable: true});
+  await channel.assertQueue(queue2, {durable: true})
+  await channel.bindQueue(queue2, exchange2, routingKey2);
 
 
   return channel;

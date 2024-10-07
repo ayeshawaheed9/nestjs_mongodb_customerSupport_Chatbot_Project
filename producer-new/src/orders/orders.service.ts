@@ -53,7 +53,7 @@ export class OrdersService {
     const savedOrder = await newOrder.save();
     const routingKey = 'order_placed';
     
-    const publishResult = this.channel.publish('direct_exchange',routingKey, savedOrder); 
+    const publishResult = this.channel.publish('direct_exchange',routingKey, savedOrder._id); 
     if (publishResult) {
       console.log('Order emitted to direct exchange');
     }
