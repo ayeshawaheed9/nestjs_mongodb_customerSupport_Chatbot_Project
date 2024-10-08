@@ -11,7 +11,7 @@ export class SearchService {
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
   ) {}
 
-  async search(query: string): Promise<{ users: User[]; orders: Order[] }> {
+  async multi_field_search(query: string): Promise<{ users: User[]; orders: Order[] }> {
     const userSearch = this.userModel.find({
       userName: { $regex: query, $options: 'i' },
     });
@@ -24,4 +24,20 @@ export class SearchService {
 
     return { users, orders };
   }
+  
+  async fuzzy_search(query: string): Promise<{ users: User[]; orders: Order[] }> {
+    const fuzzyQuery = `.*${query}.*`;
+    const userSearch = this.userModel.find({
+      userName: { $regex: fuzzyQuery, $options: 'i' },
+    });
+
+    const orderSearch = this.orderModel.find({
+      productName: { $regex: fuzzyQuery, $options: 'i' },
+    });
+
+    const [users, orders] = await Promise.all([userSearch, orderSearch]);
+
+    return { users, orders };
+  }
+
 }

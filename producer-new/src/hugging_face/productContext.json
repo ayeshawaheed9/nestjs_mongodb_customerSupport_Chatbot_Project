@@ -1,0 +1,20 @@
+{
+    "products": [
+      {
+        "name": "Hydrating Cream",
+        "description": "A moisturizing cream for dry skin.",
+        "benefits": "Provides deep hydration and improves skin texture."
+      },
+      {
+        "name": "Sunscreen Lotion",
+        "description": "A lightweight sunscreen for all skin types.",
+        "benefits": "Protects against harmful UV rays and keeps skin fresh."
+      },
+      {
+        "name": "Exfoliating Scrub",
+        "description": "Gentle scrub for removing dead skin cells.",
+        "benefits": "Promotes a brighter complexion and smooth skin."
+      }
+    ]
+  }
+  
