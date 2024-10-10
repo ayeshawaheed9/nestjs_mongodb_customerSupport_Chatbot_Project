@@ -5,6 +5,9 @@ import RedisStore from 'connect-redis';
 import { ClientProxy } from '@nestjs/microservices';
 import { createClient } from 'redis';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+
+const redisClient = createClient({ url: 'redis://localhost:6379' });
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice<MicroserviceOptions>({
@@ -19,8 +22,7 @@ async function bootstrap() {
   });
 
   //app.useGlobalInterceptors( new RemoveIdInterceptor());
-  // Create Redis client for session store
-  const redisClient = createClient({ url: 'redis://localhost:6379' });
+
   await redisClient.connect();
 
   // Create the Redis store
@@ -39,7 +41,8 @@ async function bootstrap() {
   );
   await app.startAllMicroservices();
   console.log('Microservice listening for order status')
+  
   await app.listen(9000);
-
 }
+export { redisClient }; 
 bootstrap();

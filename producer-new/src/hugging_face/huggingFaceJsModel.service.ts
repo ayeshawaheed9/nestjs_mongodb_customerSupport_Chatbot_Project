@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { HfInference } from '@huggingface/inference';
 import * as fs from 'fs';
-import * as path from 'path';
-
+// this model take context and gives anwers from the context, but it gives only one word answers 
 @Injectable()
 export class HuggingFaceServiceJsModel {
   private inference: HfInference;
-  //private readonly model: string = 'mistralai/Mistral-7B-v0.1'; // Replace with your desired model
   private readonly accessToken: string = 'ACCESS_TOKEN'; // Use your access token from .env file
 
   constructor() {
@@ -34,7 +32,7 @@ export class HuggingFaceServiceJsModel {
   }
 
   async answerQuestion(question: string): Promise<any> {
-    const context = await this.readContextFromFile(); // Get context from the JSON file
+    const context = await this.readContextFromFile(); 
     console.log(context);
     const data = {
       inputs: {
@@ -59,7 +57,6 @@ export class HuggingFaceServiceJsModel {
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
-      console.log(JSON.stringify(response));
       const result = await response.json(); // Parse the response as JSON
       return result.answer; // Return the result
     } catch (error) {

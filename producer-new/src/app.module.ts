@@ -13,7 +13,10 @@
   import { HuggingFaceController } from './hugging_face/hugging_Face.controller';
   import { ConfigModule } from '@nestjs/config';
   import { CustomCacheInterceptor } from './interceptors/customCacheInterceptor';
-import { HuggingFaceServiceJsModel } from './hugging_face/huggingFaceJsModel.service';
+  import { HuggingFaceServiceGenerativeModel } from './hugging_face/huggingFaceGenerativeModel.service';
+  import { HuggingFaceServiceJsModel } from './hugging_face/huggingFaceJsModel.service';
+  import { HfTransformerServiceModel } from './hugging_face/hfTransformerModel.service';
+  import { HuggingFaceService } from './hugging_face/hf.service';
   @Module({
     imports: [ DatabaseModule, SearchModule, OrdersModule, UserModule , fileUploadModule,
       CacheModule.register({
@@ -31,7 +34,8 @@ import { HuggingFaceServiceJsModel } from './hugging_face/huggingFaceJsModel.ser
         provide: APP_INTERCEPTOR,
         useClass: CustomCacheInterceptor,
       },
-      HuggingFaceServiceBertModel, HuggingFaceServiceJsModel
+      HuggingFaceServiceBertModel, HuggingFaceServiceJsModel, HuggingFaceServiceGenerativeModel, HfTransformerServiceModel,
+      HuggingFaceService
     ],
   })
   export class AppModule {}

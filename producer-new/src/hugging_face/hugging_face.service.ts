@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HfInference } from '@huggingface/inference';
 import * as fs from 'fs';
-
+// not giving good answers
 @Injectable()
 export class HuggingFaceServiceBertModel {
   private inference: HfInference;

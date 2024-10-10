@@ -1,20 +1,49 @@
 {
-    "products": [
-      {
-        "name": "Hydrating Cream",
-        "description": "A moisturizing cream for dry skin.",
-        "benefits": "Provides deep hydration and improves skin texture."
-      },
-      {
-        "name": "Sunscreen Lotion",
-        "description": "A lightweight sunscreen for all skin types.",
-        "benefits": "Protects against harmful UV rays and keeps skin fresh."
-      },
-      {
-        "name": "Exfoliating Scrub",
-        "description": "Gentle scrub for removing dead skin cells.",
-        "benefits": "Promotes a brighter complexion and smooth skin."
-      }
-    ]
-  }
-  
+  "products": [
+    {
+      "name": "Hydrating Face Cream",
+      "description": "A lightweight, hydrating face cream that provides long-lasting moisture.",
+      "benefits": "Keeps skin hydrated, reduces dryness, smooths skin texture."
+    },
+    {
+      "name": "Anti-Aging Serum",
+      "description": "A potent serum formulated with antioxidants to reduce the appearance of fine lines and wrinkles.",
+      "benefits": "Reduces wrinkles, improves skin elasticity, evens out skin tone."
+    },
+    {
+      "name": "Brightening Eye Cream",
+      "description": "An eye cream that brightens dark circles and reduces puffiness.",
+      "benefits": "Brightens under-eye area, reduces puffiness, hydrates delicate skin."
+    },
+    {
+      "name": "Sunscreen SPF 50",
+      "description": "A broad-spectrum sunscreen that protects against UVA and UVB rays.",
+      "benefits": "Protects against sunburn, prevents premature aging, lightweight and non-greasy."
+    },
+    {
+      "name": "Charcoal Face Mask",
+      "description": "A deep-cleansing face mask that draws out impurities and unclogs pores.",
+      "benefits": "Detoxifies skin, reduces blackheads, controls excess oil production."
+    },
+    {
+      "name": "Vitamin C Serum",
+      "description": "A powerful serum with Vitamin C to brighten and even out skin tone.",
+      "benefits": "Boosts radiance, improves skin texture, reduces pigmentation."
+    },
+    {
+      "name": "Exfoliating Scrub",
+      "description": "A gentle scrub that exfoliates dead skin cells for a smoother complexion.",
+      "benefits": "Exfoliates dead skin, unclogs pores, leaves skin feeling soft."
+    },
+    {
+      "name": "Moisturizing Hand Cream",
+      "description": "A rich hand cream that deeply moisturizes and soothes dry skin.",
+      "benefits": "Nourishes dry hands, soothes rough skin, absorbs quickly."
+    },
+    {
+      "name": "Aloe Vera Gel",
+      "description": "A soothing gel that calms irritated skin and reduces redness.",
+      "benefits": "Soothes sunburns, calms irritation, hydrates and cools skin."
+    }
+  ]
+}
