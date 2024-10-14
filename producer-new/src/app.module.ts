@@ -17,8 +17,15 @@
   import { HuggingFaceServiceJsModel } from './hugging_face/huggingFaceJsModel.service';
   import { HfTransformerServiceModel } from './hugging_face/hfTransformerModel.service';
   import { HuggingFaceService } from './hugging_face/hf.service';
-  @Module({
-    imports: [ DatabaseModule, SearchModule, OrdersModule, UserModule , fileUploadModule,
+import { ChatHistoryService } from './chatHistoryModule/chatHistory.service';
+import { HuggingFaceModule } from './hugging_face/huggingFace.module';
+import { chatHistoryModule } from './chatHistoryModule/chatHistory.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Chat, ChatSchema} from './schemas/chat.schema'; 
+@Module({
+    imports: [ 
+      MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]), // Ensure the model is registered
+      DatabaseModule, SearchModule, OrdersModule, UserModule , fileUploadModule,HuggingFaceModule,chatHistoryModule,
       CacheModule.register({
         store: redisStore,
         host: 'localhost', 
@@ -28,14 +35,12 @@
       isGlobal: true, 
     }),
     ],
-    controllers: [AppController, HuggingFaceController],
+    controllers: [AppController],
     providers: [AppService,
       {
         provide: APP_INTERCEPTOR,
         useClass: CustomCacheInterceptor,
       },
-      HuggingFaceServiceBertModel, HuggingFaceServiceJsModel, HuggingFaceServiceGenerativeModel, HfTransformerServiceModel,
-      HuggingFaceService
     ],
   })
   export class AppModule {}
