@@ -5,6 +5,12 @@ import RedisStore from 'connect-redis';
 import { ClientProxy } from '@nestjs/microservices';
 import { createClient } from 'redis';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import * as dotenv from 'dotenv';
+
+
+dotenv.config();
+console.log("ACCESS_TOKEN in main.ts:", process.env.ACCESS_TOKEN);
+
 
 const redisClient = createClient({ url: 'redis://localhost:6379' });
 
@@ -35,14 +41,14 @@ async function bootstrap() {
       resave: false,               // Don't save session if unmodified
       saveUninitialized: false,    // Don't create session until something stored
       cookie: {
-        maxAge: 600000,  
+        maxAge: 600000,
       },
     }),
   );
   await app.startAllMicroservices();
   console.log('Microservice listening for order status')
-  
+
   await app.listen(9000);
 }
-export { redisClient }; 
+export { redisClient };
 bootstrap();

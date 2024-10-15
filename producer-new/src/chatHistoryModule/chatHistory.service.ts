@@ -57,7 +57,6 @@ export class ChatHistoryService {
       await redisClient.expire(chatKey, 3600);
       console.log('Chat history cached in Redis.');
     }
-
     return dbHistory;  // Return the chat history from MongoDB
   }
 
@@ -87,5 +86,14 @@ export class ChatHistoryService {
       console.error("Error saving chat to MongoDB or Redis:", error);
       throw error;
     }
+  }
+
+  async getRecentUserQueries(userId: string) {
+    const recentQueries = await this.chatModel.find({ userId: new Types.ObjectId(userId) })
+                                               .sort({ timestamp: -1 })
+                                               .limit(5) 
+                                               .lean()
+                                               .exec();
+    return recentQueries.map(query => query.question);
   }
 }

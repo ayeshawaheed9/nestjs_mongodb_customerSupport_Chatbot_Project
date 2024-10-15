@@ -7,6 +7,7 @@ import { HuggingFaceService } from './hf.service';
 import { Types } from 'mongoose';
 import { redisClient } from 'src/main';
 import { ChatHistoryService } from 'src/chatHistoryModule/chatHistory.service';
+import { get } from 'http';
 
 @Controller('huggingface')
 export class HuggingFaceController {
@@ -35,7 +36,7 @@ export class HuggingFaceController {
   @Get('ask')
   async askQuestiongemma(@Body('question') question: string, @Body('userId')userId: string) {
     console.log(userId);
-    return await this.huggingFaceService.getAnswer(question, userId);
+    return await this.huggingFaceService.getContextualAnswer(question, userId);
   }
 
   @Post('/ask')
@@ -69,4 +70,23 @@ export class HuggingFaceController {
     const chatHistory = await this.chatservice.getChatHistoryfromdb(userId);
     return chatHistory;
   }
+
+  @Get('/getSentiment')
+  async getsentiment(@Body('question') question: string){
+    const sentiment = await this.huggingFaceService.analyzeSentiment(question);
+    return sentiment;
+  }
+
+  @Get('/getSentimentalAns')
+  async getSentimentalAns(@Body('question') question: string){
+    const getAnsSentimental = await this.huggingFaceService.getSentimentalAndContextualAnswer(question);
+    return getAnsSentimental;
+  }
+  
+  @Get('/getSentimentalIntentAns')
+  async getSentimentalIntentAns(@Body('question') question: string){
+    const getAnsSentimentalIntent = await this.huggingFaceService.getSentimentalIntentContextualAnswer(question);
+    return getAnsSentimentalIntent;
+  }
+
 }
