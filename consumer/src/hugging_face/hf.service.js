@@ -5,17 +5,31 @@ import { HfInference } from "@huggingface/inference";
 import * as fs from 'fs/promises';
 import { redisClient } from 'src/main';
 import { ChatHistoryService } from 'src/chatHistoryModule/chatHistory.service';
+import { encode } from 'gpt-3-encoder'; // Use a tokenizer
+import { config } from 'dotenv';
+
+config(); // Load .env variables
 
 @Injectable()
 export class HuggingFaceService {
+
     constructor(@Inject(ChatHistoryService) chatHistoryService) {
         const token = process.env.ACCESS_TOKEN; 
         console.log("Token value:", token); 
-     
+        
         this.chatService = chatHistoryService;
         this.inference = new HfInference(token);
+
+        this.tokenLimit = parseInt(process.env.QUESTION_LENGTH, 10);
+        console.log(this.tokenLimit);
     }
     async getAnswer(question, userId) {
+        // Tokenize the question and check its length
+        const tokenizedQuestion = encode(question);
+        
+        if (tokenizedQuestion.length > 50) {
+            return 'Query exceeds the maximum token limit of 50.';
+        }
         const context = await this.getContext();
         console.log('user id in function get answer', userId);
         
@@ -46,6 +60,11 @@ export class HuggingFaceService {
         return responseText;
     }
     async getContextualAnswer(question, userId) {
+        const tokenizedQuestion = encode(question);
+        
+        if (tokenizedQuestion.length > this.tokenLimit) {
+            return 'Query exceeds the maximum token limit of 50.';
+        }
         const context = await this.getUserContext();
         console.log('user id in function get answer', userId);
         
@@ -76,6 +95,11 @@ export class HuggingFaceService {
         return responseText;
     }
     async getSentimentalAndContextualAnswer(question, userId) {
+        const tokenizedQuestion = encode(question);
+        
+        if (tokenizedQuestion.length > this.tokenLimit) {
+            return 'Query exceeds the maximum token limit of 50.';
+        }
         const sentiment = await this.analyzeSentiment(question);
         let sentimentInstruction = '';
     
@@ -221,6 +245,11 @@ async detectIntent(question) {
    // return result.labels[0];  // Return the most likely intent
 }
 async getSentimentalIntentContextualAnswer(question, userId) {
+    const tokenizedQuestion = encode(question);
+        
+    if (tokenizedQuestion.length > this.tokenLimit) {
+            return 'Query exceeds the maximum token limit of 50.';
+    }
     // Get context for the user from past interactions
     const context = await this.getUserContext(userId);
     console.log('Context:', context);

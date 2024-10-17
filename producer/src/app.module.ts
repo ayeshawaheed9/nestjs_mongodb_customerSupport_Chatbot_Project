@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
-import { ordersGateway } from './gateway/ordersGateway';
 import { DatabaseModule } from './database/database.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Order } from './orders.schema';
 import { OrderSchema } from './schemas/orders.schema';
+import { Order } from './schemas/orders.schema';
+import { HuggingFaceGateway } from './gateway/huggingFace/huggingFace.gateway';
 @Module({
   imports: [ 
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
@@ -28,6 +28,6 @@ import { OrderSchema } from './schemas/orders.schema';
     },
   ]),],
   controllers: [AppController],
-  providers: [AppService, ordersGateway],
+  providers: [AppService, HuggingFaceGateway],
 })
 export class AppModule { }

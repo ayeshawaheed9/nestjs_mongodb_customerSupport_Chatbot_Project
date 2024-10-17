@@ -6,7 +6,7 @@ import { Order, OrderDocument } from "./schemas/orders.schema";
 import { ClientProxy } from "@nestjs/microservices";
 import { AppService } from './app.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from "@nestjs/microservices";
-import { createRmqConnection } from "./rmq.config";
+import { createRmqConnection } from "./config/rmq.config";
 @Controller()
 export class AppController{
     public channel;

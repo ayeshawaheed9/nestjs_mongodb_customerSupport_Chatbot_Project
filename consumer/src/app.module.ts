@@ -22,6 +22,8 @@ import { HuggingFaceModule } from './hugging_face/huggingFace.module';
 import { chatHistoryModule } from './chatHistoryModule/chatHistory.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Chat, ChatSchema} from './schemas/chat.schema'; 
+import { HuggingFaceGateway } from './gateway/huggingFace/huggingFace.gateway';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
     imports: [ 
       MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]), // Ensure the model is registered
@@ -34,6 +36,7 @@ import { Chat, ChatSchema} from './schemas/chat.schema';
     ConfigModule.forRoot({
       isGlobal: true, 
     }),
+    ScheduleModule.forRoot(),
     ],
     controllers: [AppController],
     providers: [AppService,
@@ -41,6 +44,6 @@ import { Chat, ChatSchema} from './schemas/chat.schema';
         provide: APP_INTERCEPTOR,
         useClass: CustomCacheInterceptor,
       },
-    ],
+    HuggingFaceGateway, HuggingFaceService],
   })
   export class AppModule {}

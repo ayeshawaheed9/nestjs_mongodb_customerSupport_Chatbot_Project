@@ -7,7 +7,6 @@ import { HuggingFaceService } from './hf.service';
 import { Types } from 'mongoose';
 import { redisClient } from 'src/main';
 import { ChatHistoryService } from 'src/chatHistoryModule/chatHistory.service';
-import { get } from 'http';
 
 @Controller('huggingface')
 export class HuggingFaceController {
@@ -47,7 +46,7 @@ export class HuggingFaceController {
         return answer ;
     }
   @Get('/chatHistory')
-    async getChatHistory(@Body('userId') userId: string) {
+  async getChatHistory(@Body('userId') userId: string) {
       const convertedId =  new Types.ObjectId(userId);
       const chatKey = `chat_history:${convertedId}`; 
       try {

@@ -1,6 +1,6 @@
 import amqp from "amqp-connection-manager";
 export async function createRmqConnection(){
-const connection = await amqp.connect(['amqp://localhost:5672']);
+const connection = amqp.connect(['amqp://localhost:5672']);
 if (connection){
     console.log('yes');
 }
