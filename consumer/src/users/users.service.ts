@@ -75,7 +75,7 @@ export class UserService{
       }
       return user;
     }
-    async getUserByName (userName: string){
+    async getUserByName (userName: string): Promise<any>{
         // Check if the order is cached
         const cachedUser = await this.cacheManager.get<UserDocument>(`user-${userName}`);
         

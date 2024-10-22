@@ -75,7 +75,7 @@ export class OrdersService {
 
     return leanOrder;
   }
-  async getOrderById(orderId: string): Promise<OrderDocument> {
+  async getOrderById(orderId: string): Promise<any> {
     // Check if the order is cached
     const cachedOrder = await this.cacheManager.get<OrderDocument>(`order-${orderId}`);
     
@@ -91,7 +91,7 @@ export class OrdersService {
     return order;
   }
 
-  async updateOrder(orderId: string, updateData: Partial<CreateOrderDto>): Promise<OrderDocument> {
+  async updateOrder(orderId: string, updateData: Partial<CreateOrderDto>):Promise<any> {
     const updatedOrder = await this.orderModel.findByIdAndUpdate(orderId, updateData, {
       new: true,
     }).lean().exec();

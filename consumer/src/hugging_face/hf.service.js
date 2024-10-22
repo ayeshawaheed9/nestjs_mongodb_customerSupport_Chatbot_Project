@@ -5,14 +5,13 @@ import { HfInference } from "@huggingface/inference";
 import * as fs from 'fs/promises';
 import { redisClient } from 'src/main';
 import { ChatHistoryService } from 'src/chatHistoryModule/chatHistory.service';
-import { encode } from 'gpt-3-encoder'; // Use a tokenizer
+import { encode } from 'gpt-3-encoder';
 import { config } from 'dotenv';
 
-config(); // Load .env variables
+config();
 
 @Injectable()
 export class HuggingFaceService {
-
     constructor(@Inject(ChatHistoryService) chatHistoryService) {
         const token = process.env.ACCESS_TOKEN; 
         console.log("Token value:", token); 
@@ -152,7 +151,6 @@ export class HuggingFaceService {
     
         return responseText;
     }
-    
     async getUserContext(userId) {
     let cachedContext = await redisClient.get('contextCache');
     let dynamicContext = await this.chatService.getRecentUserQueries(userId);
@@ -169,7 +167,7 @@ export class HuggingFaceService {
 
     return context;
     }
-  async getContext() {
+    async getContext() {
     let cachedContext = await redisClient.get('contextCache');
     let context; 
 
@@ -181,9 +179,8 @@ export class HuggingFaceService {
         context = cachedContext; 
     }
     return context; 
-   }
-
-  async readContextFromFile() {
+    }
+    async readContextFromFile() {
     try {
         const contextFilePath = 'src/hugging_face/productContext.json'; 
         const data = await fs.readFile(contextFilePath, 'utf-8');
@@ -197,9 +194,8 @@ export class HuggingFaceService {
     } catch (error) {
       throw new Error('Error reading or parsing context file: ' + error.message);
     }
-  }
-
-  async analyzeSentiment(question) {
+    }
+    async analyzeSentiment(question) {
     try {
         const sentimentResponse = await this.inference.textClassification({
             model: "j-hartmann/emotion-english-distilroberta-base",  // Sentiment analysis model
@@ -213,7 +209,7 @@ export class HuggingFaceService {
         console.error('Error in sentiment analysis:', error);
         throw error;
     }
-}
+    }
 async detectIntent(question) {
     console.log("coming inside detectIntent")
     const intents = ["order_placing", "product_inquiry", "feedback", "complaint"];
@@ -243,7 +239,7 @@ async detectIntent(question) {
 
 
    // return result.labels[0];  // Return the most likely intent
-}
+    }
 async getSentimentalIntentContextualAnswer(question, userId) {
     const tokenizedQuestion = encode(question);
         
@@ -290,8 +286,7 @@ async getSentimentalIntentContextualAnswer(question, userId) {
     await redisClient.set(cacheKey, responseText, 'EX', 3600);
     await this.chatService.appendtoChatDb(userId, question, responseText);
     return responseText;
-}
-
+    }
 }
 
 //USING GOOGLE-FLAN T5 MODEL 

@@ -2,11 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
 import RedisStore from 'connect-redis';
-import { ClientProxy } from '@nestjs/microservices';
 import { createClient } from 'redis';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import * as dotenv from 'dotenv';
-
+import { VersioningType } from '@nestjs/common';
 
 dotenv.config();
 console.log("ACCESS_TOKEN in main.ts:", process.env.ACCESS_TOKEN);
@@ -47,7 +46,10 @@ async function bootstrap() {
   );
   await app.startAllMicroservices();
   console.log('Microservice listening for order status')
-
+   app.enableVersioning({
+    type: VersioningType.URI, // Type of versioning
+    defaultVersion: '1',      // Optional default version
+  });
   await app.listen(9000);
 }
 export { redisClient };

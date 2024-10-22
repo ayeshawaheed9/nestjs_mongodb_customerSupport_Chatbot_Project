@@ -10,7 +10,10 @@ import { AuthGuard } from 'src/guard/auth.guard';
 
 @UseGuards(AuthGuard)
 @UseInterceptors(CacheInterceptor)
-@Controller('orders')
+@Controller({
+  path: 'orders',
+  version: '1',
+})
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 

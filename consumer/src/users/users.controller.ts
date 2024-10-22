@@ -3,8 +3,12 @@ import { Controller, Post, Get,Param, Body, UseInterceptors, Req } from "@nestjs
 import { UserService } from "./users.service";
 import { createUserDto } from "src/dtos/create-user.dto";
 import { userloginDto } from "src/dtos/user-login.dto";
+import { UserDocument } from "src/schemas/user.schema";
 @UseInterceptors(CacheInterceptor)
-@Controller('users')
+@Controller({
+  path: 'users',
+  version: '1',
+})
 export class UserController{
     constructor(private readonly usersService: UserService){
 
@@ -18,7 +22,7 @@ export class UserController{
         return this.usersService.loginUser(loginCredentials,role, req.session)
     }
     @Get('/get_user/:username')
-    async getUserbyName(@Param('username') username: string){
+    async getUserbyName(@Param('username') username: string): Promise<UserDocument | null>{
         return this.usersService.getUserByName(username);
     }
     @Post('logout')

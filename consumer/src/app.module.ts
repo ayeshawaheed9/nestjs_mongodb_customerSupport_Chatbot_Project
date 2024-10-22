@@ -1,6 +1,6 @@
-  import { Module } from '@nestjs/common';
+  import { Module , NestModule} from '@nestjs/common';
   import { AppService } from './app.service';
-  import { APP_INTERCEPTOR } from '@nestjs/core';
+  import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
   import { DatabaseModule } from './database/database.module';
   import { OrdersModule } from './orders/orders.module';
   import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
@@ -24,10 +24,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Chat, ChatSchema} from './schemas/chat.schema'; 
 import { HuggingFaceGateway } from './gateway/huggingFace/huggingFace.gateway';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { LoggingModule } from './loggingModule/logging.module';
+import { MiddlewareConsumer } from '@nestjs/common';
+import { LoggingMiddleware } from './middlewares/logging.middleware';
 @Module({
     imports: [ 
       MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]), // Ensure the model is registered
-      DatabaseModule, SearchModule, OrdersModule, UserModule , fileUploadModule,HuggingFaceModule,chatHistoryModule,
+      DatabaseModule, SearchModule, OrdersModule, UserModule , fileUploadModule,HuggingFaceModule,chatHistoryModule,LoggingModule,
       CacheModule.register({
         store: redisStore,
         host: 'localhost', 
@@ -37,6 +41,10 @@ import { ScheduleModule } from '@nestjs/schedule';
       isGlobal: true, 
     }),
     ScheduleModule.forRoot(),
+    ThrottlerModule.forRoot([{
+      ttl: 10000,
+      limit: 3,
+    }]),
     ],
     controllers: [AppController],
     providers: [AppService,
@@ -44,6 +52,17 @@ import { ScheduleModule } from '@nestjs/schedule';
         provide: APP_INTERCEPTOR,
         useClass: CustomCacheInterceptor,
       },
+      {
+        provide: APP_GUARD,
+        useClass: ThrottlerGuard
+      },
     HuggingFaceGateway, HuggingFaceService],
   })
-  export class AppModule {}
+
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggingMiddleware) // Apply the LoggingMiddleware
+      .forRoutes('*'); // Use '*' to apply it to all routes
+  }
+}

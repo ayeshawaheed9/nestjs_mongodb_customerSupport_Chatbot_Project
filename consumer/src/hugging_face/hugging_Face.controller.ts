@@ -7,8 +7,13 @@ import { HuggingFaceService } from './hf.service';
 import { Types } from 'mongoose';
 import { redisClient } from 'src/main';
 import { ChatHistoryService } from 'src/chatHistoryModule/chatHistory.service';
+import { Throttle } from '@nestjs/throttler';
+//rate limit the controller   
+@Controller({
+  path: 'huggingface',
+  version: '1',
+})
 
-@Controller('huggingface')
 export class HuggingFaceController {
   constructor(private readonly huggingFaceService: HuggingFaceService,
     private chatservice: ChatHistoryService
