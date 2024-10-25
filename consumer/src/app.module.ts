@@ -28,6 +28,9 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { LoggingModule } from './loggingModule/logging.module';
 import { MiddlewareConsumer } from '@nestjs/common';
 import { LoggingMiddleware } from './middlewares/logging.middleware';
+import { BarChartCmdService } from './Visualization/barChartCmd.service';
+import ChartService from './Visualization/imageChart.service.js';
+
 @Module({
     imports: [ 
       MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]), // Ensure the model is registered
@@ -56,7 +59,7 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
         provide: APP_GUARD,
         useClass: ThrottlerGuard
       },
-    HuggingFaceGateway, HuggingFaceService],
+    HuggingFaceGateway, HuggingFaceService, BarChartCmdService, ChartService],
   })
 
 export class AppModule implements NestModule {

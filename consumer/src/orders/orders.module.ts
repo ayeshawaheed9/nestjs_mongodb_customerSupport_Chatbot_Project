@@ -9,6 +9,8 @@ import * as redisStore from 'cache-manager-ioredis';
 import { User, UserSchema } from 'src/schemas/user.schema';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { UserService } from 'src/users/users.service';
+// Import the JavaScript file as a CommonJS module
+import ChartService from 'src/Visualization/imageChart.service.js';
 
 @Module({
   imports: [
@@ -37,8 +39,8 @@ import { UserService } from 'src/users/users.service';
         host: 'localhost', 
         port: 6379,
     }
-  )],
+  ), ChartService],
   controllers: [OrdersController],
-  providers: [OrdersService, AuthGuard, UserService],
+  providers: [OrdersService, AuthGuard, UserService, ChartService],
 })
 export class OrdersModule {}

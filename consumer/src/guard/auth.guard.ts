@@ -1,27 +1,36 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { UserService } from 'src/users/users.service';
 import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly userService: UserService) {}  // Inject UserService
+  constructor(private readonly userService: UserService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    // Check if the session exists and if the user ID is stored in the session
-    if (request.session && request.session.userId) {
-      // Fetch the user from the database using the user ID stored in the session
-      const user = await this.userService.getUserById(request.session.userId);
+    console.log('AuthGuard: Checking session...');
 
-      // Check if the user exists and is logged in
-      if (user && user.isloggedIn) {
-        return true;  // Allow access if the user is logged in
-      } else {
-        throw new UnauthorizedException('User is not logged in');
-      }
-    } else {
-      throw new UnauthorizedException('No session found');
+    // Check if the session exists
+    if (request.session) {
+      console.log('AuthGuard: Session exists', request.session);
+
+      // Check if the session has expired or is invalid
+      if (request.session.userId) {
+        console.log('AuthGuard: User ID found in session:', request.session.userId);
+        const user = await this.userService.getUserById(request.session.userId);
+        
+        if (user) {
+          console.log('AuthGuard: User found:', user);
+          if (user.isloggedIn) {
+            console.log('AuthGuard: User is logged in. Access granted.');
+            return true; // User is logged in and session is active
+          }
+        }
+      } 
+
+      console.log('AuthGuard: No user ID found in session. Treating as guest.');
+      return true; // Allow access as guest
     }
   }
 }

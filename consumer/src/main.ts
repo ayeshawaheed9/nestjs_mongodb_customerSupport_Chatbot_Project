@@ -1,15 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as session from 'express-session';
+import session from 'express-session';
 import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import * as dotenv from 'dotenv';
 import { VersioningType } from '@nestjs/common';
-
 dotenv.config();
 console.log("ACCESS_TOKEN in main.ts:", process.env.ACCESS_TOKEN);
 
+import { BarChartCmdService } from './Visualization/barChartCmd.service';
 
 const redisClient = createClient({ url: 'redis://localhost:6379' });
 
@@ -50,6 +50,12 @@ async function bootstrap() {
     type: VersioningType.URI, // Type of versioning
     defaultVersion: '1',      // Optional default version
   });
+
+  // // command line visualization of the data 
+  // const chartService = app.get(ChartService); // Get ChartService instance
+  // chartService.generateChart(); 
+  
+  
   await app.listen(9000);
 }
 export { redisClient };

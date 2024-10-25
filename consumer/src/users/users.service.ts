@@ -53,7 +53,13 @@ export class UserService{
     if (!isPasswordMatching) {
       throw new UnauthorizedException('Invalid password');
     }
+
     session.userId = user._id; // Store user ID in session
+
+    // Store user ID in cache for session management
+    await this.cacheManager.set(`session:${user._id}`, 'loggedIn', 3600 ); // 1 hour
+
+
     user.isloggedIn = true;
     if (role !== 'admin' && role !== 'customer') {
       return {
@@ -106,11 +112,13 @@ export class UserService{
       }
 
       async logout(session: any) {
+        const userId = session.userId;
         session.destroy((err) => {
           if (err) {
             throw new Error('Logout failed');
           }
         });
+        await this.cacheManager.del(`session:${userId}`);
         return { message: 'Logout successful' };
       }
     

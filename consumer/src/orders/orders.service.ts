@@ -129,4 +129,38 @@ export class OrdersService {
       orders, // Return the orders for the current page
     };
   }
+  
+  async getAllOrdersWithoutPagination(): Promise<any> {
+    // Check if orders are cached
+    const cachedOrders = await this.cacheManager.get<OrderDocument[]>('all-orders-no-pagination');
+    if (cachedOrders) {
+      console.log('Cache hit for all orders:');
+      return cachedOrders; // Return cached orders if found
+    }
+
+    // Fetch all orders without pagination if not cached
+    const orders = await this.orderModel.find().lean().exec();
+
+    // Cache the fetched orders
+    await this.cacheManager.set('all-orders-no-pagination', orders, 3600 ); // Cache for 1 hour
+    return orders;
+  }
+
+
+  /// for image graph 
+
+  async getOrderSummary(): Promise<Record<string, number>> {
+    // Use the new method to get all orders
+    const orders: OrderDocument[] = await this.getAllOrdersWithoutPagination();
+
+    const summary = orders.reduce((acc, order) => {
+      const productName = order.productName; // Use productName for summarization
+      if (productName) { // Check if productName is defined
+        acc[productName] = (acc[productName] || 0) + order.quantity;
+      }
+      return acc;
+    }, {});
+
+    return summary; // { productName1: quantity1, productName2: quantity2, ... }
+  }
 }
