@@ -19,6 +19,27 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "typeRoots": ["node_modules/@types", "src/@types"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@cacheCleanup/*": ["src/cacheCleanup/*"],
+      "@chatHistoryModule/*": ["src/chatHistoryModule/*"],
+      "@database/*": ["src/database/*"],
+      "@dtos/*": ["src/dtos/*"],
+      "@fileUpload/*": ["src/fileUpload/*"],
+      "@gateway/*": ["src/gateway/*"],
+      "@guard/*": ["src/guard/*"],
+      "@hugging_face/*": ["src/hugging_face/*"],
+      "@interceptors/*": ["src/interceptors/*"],
+      "@loggingModule/*": ["src/loggingModule/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@migrations/*": ["src/migrations/*"],
+      "@orders/*": ["src/orders/*"],
+      "@products/*": ["src/Products/*"],
+      "@schemas/*": ["src/schemas/*"],
+      "@searchmodule/*": ["src/searchmodule/*"],
+      "@sessionRestore/*": ["src/sessionRestore/*"],
+      "@users/*": ["src/users/*"],
+      "@visualization/*": ["src/Visualization/*"]
+    }
   }
 }

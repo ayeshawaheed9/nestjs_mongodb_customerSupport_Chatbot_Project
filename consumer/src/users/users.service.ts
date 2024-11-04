@@ -53,14 +53,13 @@ export class UserService{
     if (!isPasswordMatching) {
       throw new UnauthorizedException('Invalid password');
     }
-
+    user.isloggedIn = true;
     session.userId = user._id; // Store user ID in session
 
     // Store user ID in cache for session management
-    await this.cacheManager.set(`session:${user._id}`, 'loggedIn', 3600 ); // 1 hour
+    await this.cacheManager.set(`session:${session.id}`, user._id, 3600); // Use session ID as key
 
 
-    user.isloggedIn = true;
     if (role !== 'admin' && role !== 'customer') {
       return {
           message: 'Role not valid'
@@ -111,15 +110,15 @@ export class UserService{
         return { users, orders };
       }
 
-      async logout(session: any) {
-        const userId = session.userId;
-        session.destroy((err) => {
-          if (err) {
-            throw new Error('Logout failed');
-          }
-        });
-        await this.cacheManager.del(`session:${userId}`);
-        return { message: 'Logout successful' };
-      }
-    
+    async logout(session: any) {
+  // Clear the userId from the session
+  const sessionId = session.id;
+  session.userId = null;
+
+  // Clear the cache for the logged-in session
+  await this.cacheManager.del(`session:${sessionId}`);
+
+  return { message: 'Logged out successfully' };
 }
+}
+    

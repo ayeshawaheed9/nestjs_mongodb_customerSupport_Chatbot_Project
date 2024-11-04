@@ -8,7 +8,7 @@ import * as dotenv from 'dotenv';
 import { VersioningType } from '@nestjs/common';
 dotenv.config();
 console.log("ACCESS_TOKEN in main.ts:", process.env.ACCESS_TOKEN);
-
+require("module-alias/register");
 import { BarChartCmdService } from './Visualization/barChartCmd.service';
 
 const redisClient = createClient({ url: 'redis://localhost:6379' });

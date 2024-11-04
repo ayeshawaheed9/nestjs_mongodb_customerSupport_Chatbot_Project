@@ -8,7 +8,7 @@ import { Response } from 'express'; // Ensure you import Response from express
 // import ChartService = require('../Visualization/imageChart.service');
 import { ValidationPipe } from '@nestjs/common';
 import ChartService from 'src/Visualization/imageChart.service.js';
-
+import { Req } from '@nestjs/common';
 @UseGuards(AuthGuard)
 @UseInterceptors(CacheInterceptor)
 @Controller({
@@ -18,16 +18,17 @@ import ChartService from 'src/Visualization/imageChart.service.js';
 export class OrdersController {
   constructor(
     private readonly ordersService: OrdersService,
-    private readonly chartService: ChartService // Inject ChartService
+    private readonly chartService: ChartService 
   ) {}
 
   @Post('/place_order/:userId')
   @UsePipes(new ValidationPipe())
   async placeOrder(
     @Param('userId') userId: string,
-    @Body() createOrderDto: CreateOrderDto
+    @Body() createOrderDto: CreateOrderDto,
+    @Req() req:any
   ) {
-    return this.ordersService.createOrder_Direct(userId, createOrderDto);
+    return this.ordersService.createOrder_Direct(userId, createOrderDto, req.session);
   }
 
   @Get('/get_order/:orderid')
@@ -44,13 +45,13 @@ export class OrdersController {
     return this.ordersService.getAllOrders(+page, +limit);
   }
 
-  @Post('/update_order/:id')
-  async updateOrder(
-    @Param('id') id: string,
-    @Body() updateData: Partial<CreateOrderDto>
-  ) {
-    return this.ordersService.updateOrder(id, updateData);
-  }
+  // @Post('/update_order/:id')
+  // async updateOrder(
+  //   @Param('id') id: string,
+  //   @Body() updateData: Partial<CreateOrderDto>
+  // ) {
+  //   return this.ordersService.updateOrder(id, updateData);
+  // }
   @UseInterceptors()  
   @Get('chart')
   async getOrderChart(@Res() res: Response): Promise<any> {

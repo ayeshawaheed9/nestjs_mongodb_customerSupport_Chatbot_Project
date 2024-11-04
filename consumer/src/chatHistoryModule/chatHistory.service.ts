@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { redisClient } from 'src/main';
-import { Chat, ChatDocument } from '../schemas/chat.schema';
+import { Chat, ChatDocument } from '@schemas/chat.schema';
 import { Model } from 'mongoose';
 @Injectable()
 export class ChatHistoryService {

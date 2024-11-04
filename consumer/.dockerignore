@@ -1,0 +1,12 @@
+# Ignore node modules
+node_modules
+# Ignore folders for uploaded files and exports
+uploads
+
+# Ignore Git files and folders
+.git
+.github
+
+# Ignore temporary files and editor configurations
+.tmp
+.vscode

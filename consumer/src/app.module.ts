@@ -30,11 +30,16 @@ import { MiddlewareConsumer } from '@nestjs/common';
 import { LoggingMiddleware } from './middlewares/logging.middleware';
 import { BarChartCmdService } from './Visualization/barChartCmd.service';
 import ChartService from './Visualization/imageChart.service.js';
+import { ProductModule } from './Products/products.module';
+import { SessionRestoreMiddleware } from './middlewares/session.restore.middleware';
+import { UserService } from './users/users.service';
+import { SessionRestoreModule } from './sessionRestore/sessionRestore.module';
 
 @Module({
     imports: [ 
-      MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]), // Ensure the model is registered
+      MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]), 
       DatabaseModule, SearchModule, OrdersModule, UserModule , fileUploadModule,HuggingFaceModule,chatHistoryModule,LoggingModule,
+      ProductModule,SessionRestoreModule,
       CacheModule.register({
         store: redisStore,
         host: 'localhost', 
@@ -65,7 +70,7 @@ import ChartService from './Visualization/imageChart.service.js';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(LoggingMiddleware) // Apply the LoggingMiddleware
-      .forRoutes('*'); // Use '*' to apply it to all routes
-  }
+      .apply(LoggingMiddleware,SessionRestoreMiddleware) 
+      .forRoutes('*'); 
+}
 }

@@ -18,7 +18,15 @@ export class AppController {
       this.channel =channel;
     });
   }
-  
+  @Get()
+  async onappstart(){
+    console.log('Hello World')
+    return {
+      message: 'Hello World'
+    }
+  }
+
+
   @MessagePattern()
   async consumemessage(@Payload() data: any, @Ctx() context: RmqContext) {
     console.log('Message received:', data);

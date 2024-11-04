@@ -11,11 +11,13 @@ import { AuthGuard } from 'src/guard/auth.guard';
 import { UserService } from 'src/users/users.service';
 // Import the JavaScript file as a CommonJS module
 import ChartService from 'src/Visualization/imageChart.service.js';
+import { Product, ProductSchema } from 'src/schemas/product.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
     ClientsModule.register([
       {
         name: 'ORDERS_SERVICE',

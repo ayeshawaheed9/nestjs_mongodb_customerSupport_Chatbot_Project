@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ConvBertForMaskedLM } from '@xenova/transformers';
 import { User } from 'src/schemas/user.schema';
 import { UserService } from 'src/users/users.service';
 
@@ -28,8 +29,10 @@ export class RolesGuard implements CanActivate {
     //   throw new ForbiddenException('You do not have permission to access this resource');
     // }
     if(user.role == 'admin'){
+      console.log('access granted to admin')
         return true;
     }
+    console.log('access not granted as user is not an admin')
     return false;
   }
 }
