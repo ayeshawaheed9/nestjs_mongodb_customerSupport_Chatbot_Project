@@ -1,52 +1,45 @@
-import amqp from "amqp-connection-manager";
-export async function createRmqConnection(){
-const connection = amqp.connect(['amqp://localhost:5672']);
-if (connection){
-    console.log('yes');
-}
-console.log(connection);
-connection.on('connect', () => {
-  console.log('Successfully connected to RabbitMQ');
-});
-connection.on('error', (err) => {
-    console.error('Connection error:', err);
-});
-connection.on('disconnect', (params) => {
-  console.error('Disconnected from RabbitMQ:', params.err.message);
-});
-  
-  const channel = await connection.createChannel();
+import amqp from 'amqp-connection-manager';
 
-  //dead letter exchange and qeuee 
-  const dlxExchange = 'dlx_exchange';
-  const dlxQueue = 'dlx_queue';
+export async function createRmqConnection() {
+  const connection = amqp.connect(['amqp://localhost:5672']);
 
-  await channel.assertExchange(dlxExchange, 'direct', { durable: true });
-  await channel.assertQueue(dlxQueue, { durable: true });
-  await channel.bindQueue(dlxQueue, dlxExchange, 'dead_letter');
+  connection.on('connect', () => console.log('Connected to RabbitMQ'));
+  connection.on('disconnect', (err) =>
+    console.error('Disconnected from RabbitMQ:', err),
+  );
+  connection.on('error', (err) => console.error('Connection error:', err));
 
-  const exchange = 'direct_exchange';
-  const exchangeType ='direct'; 
-  const queue= 'orders_queue';
-  const routingKey = 'order_placed';
-  
-  await channel.assertExchange(exchange, exchangeType, { durable: true });
-  await channel.assertQueue(queue, { durable: true, arguments: {
-    'x-message-ttl': 60000,
-    'x-dead-letter-exchange': dlxExchange,  
-    'x-dead-letter-routing-key': 'dead_letter'  
+  const channel = await connection.createChannel({
+    json: true,
+    setup: async (channel) => {
+      const fanoutExchange = 'fanout_exchange';
+      const topicExchange = 'topic_exchange';
 
-} });
-  await channel.bindQueue(queue, exchange, routingKey);
+      await channel.assertExchange(fanoutExchange, 'fanout');
+      await channel.assertExchange(topicExchange, 'topic');
 
-  const exchange2 = 'order_status_exchange';
-  const exchangeType2 ='direct'; 
-  const queue2= 'orders_status_queue';
-  const routingKey2 = 'order_status_updated';
+      const queues = [
+        { name: 'orders_queue', routingKey: 'orders.*' },
+        { name: 'billing_queue', routingKey: 'billing.*' },
+        { name: 'notifications_queue', routingKey: 'notifications.*' },
+      ];
 
-  await channel.assertExchange(exchange2, exchangeType2, {durable: true});
-  await channel.assertQueue(queue2, {durable: true})
-  await channel.bindQueue(queue2, exchange2, routingKey2);
+      for (const { name, routingKey } of queues) {
+        await channel.assertQueue(name);
+        await channel.bindQueue(name, fanoutExchange, '');
+        await channel.bindQueue(name, topicExchange, routingKey);
+      }
+      console.log('Fanout exchange, topic exchange, and queues configured');
+      await channel.assertExchange('dlx_exchange', 'direct', { durable: true });
+      await channel.assertQueue('failed_queue', { durable: true });
+      await channel.bindQueue(
+        'failed_queue',
+        'dlx_exchange',
+        'failed_routing_key',
+      );
+      console.log('dlx exchange and queue initiliazed');
+    },
+  });
 
   return channel;
 }
