@@ -10,12 +10,19 @@ import { createUserDto } from 'src/dtos/create-user.dto';
 import { Cache } from 'cache-manager';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { userloginDto } from 'src/dtos/user-login.dto';
+import { TwilioService } from 'nestjs-twilio';
+import { Twilio } from 'twilio';
 @Injectable()
 export class UserService {
+  client = new Twilio(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN,
+  );
   constructor(
     @InjectModel(Order.name) public orderModel: Model<OrderDocument>,
     @InjectModel(User.name) public userModel: Model<UserDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly twilioService: TwilioService,
   ) {}
   async createUser(user: createUserDto, role: string) {
     const saltOrRounds = 10;
@@ -65,7 +72,6 @@ export class UserService {
     console.log('Session user ID:', session.userId);
     return { message: 'Login successful' };
   }
-
   async getUserById(userId: string) {
     const user = await this.userModel.findById(userId);
     if (!user) {
@@ -107,7 +113,6 @@ export class UserService {
 
     return { users, orders };
   }
-
   async logout(session: any) {
     const userId = session.userId;
     if (!userId) {
@@ -115,21 +120,65 @@ export class UserService {
         message: 'User is not logged in.',
       };
     }
-console.log('user id in session from logout function : ', session.userId)
+    console.log('user id in session from logout function : ', session.userId);
     await this.cacheManager.del(`session:${session.id}`);
     console.log('Session cleared from cache for user ID:', userId);
-
-    // Optionally update user status to logged out in the database
     const user = await this.userModel.findById(userId).exec();
     if (user) {
-      user.isloggedIn = false; // Set the user's status to logged out
+      user.isloggedIn = false;
       await user.save();
       console.log('User status updated to logged out:', user._id);
     }
-
-    // Clear the user ID from the session object
     session.userId = null;
 
     return { message: 'Logout successful' };
+  }
+  generateOtp(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+  async requestOtpForPasswordReset(phoneNumber: number) {
+    const user = await this.userModel.findOne({ phoneNumber });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const otp = this.generateOtp();
+    const expirationTime = new Date(Date.now() + 15000);
+
+    user.otp = otp;
+    user.otpExpiration = expirationTime;
+    await user.save();
+
+    this.client.messages
+      .create({
+        body: 'SMS Body, sent to the phone!',
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: user.phoneNumber.toString(),
+      })
+      .then((message) => console.log(message.sid));
+    return { message: 'OTP sent to phone number' };
+  }
+  async verifyOtp(phoneNumber: number, otp: string) {
+    const user = await this.userModel.findOne({ phoneNumber: phoneNumber });
+    console.log(user);
+    if (!user || user.otp !== otp || user.otpExpiration < new Date()) {
+      throw new UnauthorizedException('Invalid or expired OTP');
+    }
+
+    user.otp = null;
+    user.otpExpiration = null;
+    await user.save();
+    return { message: 'OTP verified. You may now reset your password.' };
+  }
+  async resetPassword(phoneNumber: number, newPassword: string) {
+    const user = await this.userModel.findOne({ phoneNumber: phoneNumber });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const saltOrRounds = 10;
+    user.password = await bcrypt.hash(newPassword, saltOrRounds);
+    await user.save();
+    return { message: 'Password reset successful' };
   }
 }

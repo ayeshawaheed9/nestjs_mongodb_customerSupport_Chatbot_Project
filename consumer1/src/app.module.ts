@@ -50,7 +50,8 @@ import { Cart, CartSchema } from '@schemas/cart.schema';
 import { CartController } from './cart/cart.controller';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
-
+import { TwilioModule } from 'nestjs-twilio';
+import { TwilioService } from '@users/twilio.service';
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost:27017', {
@@ -69,6 +70,10 @@ import { AppController } from './app.controller';
       host: 'localhost',
       port: 6379,
     }),
+    TwilioModule.forRoot({
+      accountSid: process.env.TWILIO_ACCOUNT_SID,
+      authToken: process.env.TWILIO_AUTH_TOKEN,
+    }),
   ],
 
   controllers: [
@@ -80,7 +85,7 @@ import { AppController } from './app.controller';
     fileUploadController,
     UserController,
     CartController,
-    AppController
+    AppController,
   ],
 
   providers: [
@@ -96,7 +101,8 @@ import { AppController } from './app.controller';
     UserService,
     CartService,
     AppService,
-    
+    TwilioService,
+
     // Guards
     AuthGuard,
     RolesGuard,
@@ -116,8 +122,6 @@ import { AppController } from './app.controller';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggingMiddleware) 
-      .forRoutes('*'); 
+    consumer.apply(LoggingMiddleware).forRoutes('*');
   }
 }

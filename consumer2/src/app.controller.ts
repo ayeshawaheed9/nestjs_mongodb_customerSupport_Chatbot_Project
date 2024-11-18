@@ -51,7 +51,7 @@ export class AppController {
         );
       } else {
         console.log('Max retries reached, sending to DLQ');
-        channel.publish(
+        await this.channel.publish(
           'dlx_exchange',
           'failed_routing_key',
           originalMessage.content,

@@ -8,31 +8,36 @@ export type UserDocument = User & Document;
 @Schema()
 export class User {
   _id: string;
-  
-  @Prop({unique: true})
+
+  @Prop({ unique: true })
   userName: string;
 
-  @Prop({required: true})
-  password: string
+  @Prop({ required: true })
+  password: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   phoneNumber: number;
 
-  @Prop({default: false})
-  isloggedIn: boolean
+  @Prop({ default: false })
+  isloggedIn: boolean;
 
-  @Prop({required:false})
+  @Prop({ required: false })
   email: string;
-
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Order' }] })  
-  orders:Types.ObjectId[];
   
+  @Prop({ required: false })
+  otp: string;
+
+  @Prop({ required: false })
+  otpExpiration: Date;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Order' }] })
+  orders: Types.ObjectId[];
+
   @Prop({ type: Types.ObjectId, ref: 'Cart' })
-  cartId: Types.ObjectId; 
+  cartId: Types.ObjectId;
 
-  @Prop({type: String, enum: ['admin', 'customer'], required: true }) 
-  role: string; 
-
+  @Prop({ type: String, enum: ['admin', 'customer'], required: true })
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
